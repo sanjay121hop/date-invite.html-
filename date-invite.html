@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Will you go on a date with me? 🌸</title>
+<style>
+:root{--bg1:#f8dbe6;--bg2:#fdeef3;--card:#fff;--ink:#6b1d3a;--sub:#a0647c;--pink:#d6247f;--pink2:#e8559b;--soft:#f8eaf0;--line:#f0c7d6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#2a0f1b;--bg2:#3a1626;--card:#4a1e32;--ink:#ffd9e6;--sub:#e6a9c0;--soft:#5b2840;--line:#7a3a57}}
+:root[data-theme="dark"]{--bg1:#2a0f1b;--bg2:#3a1626;--card:#4a1e32;--ink:#ffd9e6;--sub:#e6a9c0;--soft:#5b2840;--line:#7a3a57}
+html,body{height:100%;margin:0}
+body{background:linear-gradient(160deg,var(--bg1),var(--bg2));font-family:Georgia,'Times New Roman',serif;color:var(--ink);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.card{background:var(--card);border-radius:22px;padding:28px 22px;width:min(88vw,360px);max-height:92%;overflow-y:auto;text-align:center;box-shadow:0 12px 40px rgba(214,36,127,.18);animation:pop .35s ease}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+h1{font-size:21px;line-height:1.3;margin:14px 0 8px}
+p{margin:6px 0;font-size:14px;color:var(--sub)}
+small{font-size:11px;color:var(--sub);font-style:italic}
+.pic{width:84px;height:84px;border-radius:18px;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:48px;background:#2b2b2b}
+.pic.red{background:#e0261f}
+.big{font-size:38px}
+button{font-family:inherit;cursor:pointer;border:0}
+.btn{background:var(--pink);color:#fff;border-radius:999px;padding:12px 26px;font-size:14px;margin-top:16px;box-shadow:0 4px 14px rgba(214,36,127,.35);transition:transform .15s}
+.btn:active{transform:scale(.96)}
+.btn.full{width:100%}
+.btn:disabled{background:var(--pink2);opacity:.45;box-shadow:none;cursor:not-allowed}
+label{display:block;text-align:left;font-size:12px;font-weight:bold;margin:14px 0 5px}
+input,select{width:100%;box-sizing:border-box;padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:14px Georgia,serif}
+.grid{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:16px}
+.grid .tile{flex:0 0 calc(33.333% - 7px);box-sizing:border-box}
+.tile{background:var(--soft);border-radius:14px;padding:14px 4px;font-size:11px;color:var(--ink);transition:.15s}
+.tile span{display:block;font-size:26px;margin-bottom:4px}
+.tile:active,.tile.on{background:var(--pink);color:#fff;transform:scale(.95)}
+.fee{border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:14px;text-align:left}
+.fee div{display:flex;justify-content:space-between;font-size:14px;font-weight:bold}
+.fee b{color:var(--pink)}
+.fee small{display:block;margin-top:6px}
+.link{background:none;color:var(--sub);font-size:11px;margin-top:12px;text-decoration:underline}
+.hearts{color:var(--pink2);letter-spacing:6px;font-size:12px;margin:10px 0}
+.row{display:flex;gap:12px;justify-content:center;align-items:center}
+.btn.no{background:#a77ff0;box-shadow:0 4px 14px rgba(124,92,255,.35);transition:left .18s ease,top .18s ease,transform .15s;z-index:5}
+.dot{position:fixed;top:-12px;width:8px;height:8px;border-radius:2px;animation:fall linear forwards;pointer-events:none}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.7}}
+</style>
+</head>
+<body>
+<div class="card" id="card"></div>
+<script>
+(function(){
+  // ---- EDIT THESE ----
+  var CFG = { currency: "₹", fee: 499, pickup: "6" };
+  // --------------------
+  var KEY = "date_invite_opened_v1";
+  var card = document.getElementById("card");
+  var S = { day: "", time: "", food: "" };
+  var preview = location.hash === "#preview";
+  if (location.hash === "#reset") { try { localStorage.removeItem(KEY); sessionStorage.removeItem(KEY); } catch(e){} }
+
+  function store(op, k, v){ try { return op === "g" ? localStorage.getItem(k) : localStorage.setItem(k, v); } catch(e){ return null; } }
+  function sess(op, k, v){ try { return op === "g" ? sessionStorage.getItem(k) : sessionStorage.setItem(k, v); } catch(e){ return null; } }
+
+  function set(html){ card.innerHTML = html; card.style.animation = "none"; void card.offsetWidth; card.style.animation = ""; }
+
+  function confetti(){
+    var cols = ["#d6247f","#e8559b","#7c5cff","#ffc857","#ff8fb8"];
+    for (var i = 0; i < 50; i++){
+      var d = document.createElement("i");
+      d.className = "dot";
+      d.style.left = Math.random() * 100 + "vw";
+      d.style.background = cols[i % cols.length];
+      d.style.animationDuration = (2 + Math.random() * 2.5) + "s";
+      d.style.animationDelay = (Math.random() * .6) + "s";
+      if (i % 2) d.style.borderRadius = "50%";
+      document.body.appendChild(d);
+      setTimeout(function(el){ el.remove(); }.bind(null, d), 5500);
+    }
+  }
+
+  function expired(){
+    set('<div class="big">💔</div><h1>this link has expired</h1><p>it was only meant to be opened once.</p><small>(ask me for a new one 😌)</small>');
+  }
+
+  function s1(){
+    set('<div class="pic">🐶</div><h1>🌸 Will you go on a date with me? 🌸</h1><div class="row"><button class="btn" id="y">YES 👆</button><button class="btn no" id="no">no</button></div>');
+    var y = document.getElementById("y"), no = document.getElementById("no");
+    y.onclick = s2;
+    function run(e){
+      if (e && e.preventDefault) e.preventDefault();
+      var w = innerWidth - no.offsetWidth - 16, h = innerHeight - no.offsetHeight - 16, yr = y.getBoundingClientRect(), x, t, k = 0;
+      no.style.position = "fixed";
+      do {
+        x = Math.max(8, Math.random() * w); t = Math.max(8, Math.random() * h); k++;
+      } while (k < 30 && x < yr.right + 20 && x + no.offsetWidth > yr.left - 20 && t < yr.bottom + 20 && t + no.offsetHeight > yr.top - 20);
+      no.style.left = x + "px"; no.style.top = t + "px";
+    }
+    no.onmouseenter = no.onpointerdown = no.ontouchstart = no.onclick = run;
+  }
+  function s2(){
+    confetti();
+    set('<div class="pic red">🧽</div><h1>WAIT YOU ACTUALLY SAID YES?? 😭</h1><p>I was so ready for you to say no 😅</p><button class="btn" id="n">okay okay! →</button>');
+    document.getElementById("n").onclick = s3;
+  }
+  function s3(){
+    var today = new Date(), p = function(n){ return String(n).padStart(2, "0"); };
+    var min = today.getFullYear() + "-" + p(today.getMonth() + 1) + "-" + p(today.getDate());
+    var opts = '<option value="">Select a time...</option>';
+    for (var h = 12; h <= 21; h++) for (var m = 0; m < 60; m += 30){
+      if (h === 21 && m) continue;
+      var h12 = h > 12 ? h - 12 : h, ap = h >= 12 ? "PM" : "AM", t = h12 + ":" + p(m) + " " + ap;
+      opts += '<option>' + t + '</option>';
+    }
+    set('<div class="big">📆🐾</div><h1>So... when are you free?</h1>' +
+        '<label>Pick a Day 📅</label><input type="date" id="d" min="' + min + '">' +
+        '<label>What Time? 🕒</label><select id="t">' + opts + '</select>' +
+        '<button class="btn full" id="go" disabled>set the date ♥</button>');
+    var d = document.getElementById("d"), t = document.getElementById("t"), go = document.getElementById("go");
+    function chk(){ go.disabled = !(d.value && t.value); }
+    d.onchange = t.onchange = chk;
+    go.onclick = function(){ S.day = d.value; S.time = t.value; s4(); };
+  }
+  function s4(){
+    var f = [["☕","Chai"],["🍅","Tamatar Chatni"],["🥘","Pav Bhaji"],["🍛","Biryani"],["🍜","Noodles"]];
+    set('<h1>What are we feeling? 🍽️✨</h1><p>pick your vibe</p><div class="grid">' +
+      f.map(function(x){ return '<button class="tile" data-f="' + x[1] + '"><span>' + x[0] + '</span>' + x[1] + '</button>'; }).join("") + '</div>');
+    Array.prototype.forEach.call(card.querySelectorAll(".tile"), function(b){
+      b.onclick = function(){ b.classList.add("on"); S.food = b.dataset.f; setTimeout(s5, 280); };
+    });
+  }
+  function s5(){
+    var nice = S.day ? new Date(S.day + "T00:00").toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" }) : "";
+    set('<h1>glad you didn\'t say no. be ready by ' + CFG.pickup + ', I\'m coming to get you 🚗</h1>' +
+        '<p><small>' + nice + ' · ' + S.time + ' · ' + S.food + '</small></p>' +
+        '<p><small>P.S. normal people text. I made a website, during lunch, for you. no big deal.</small></p>' +
+        '<div class="hearts">♥ ♥ ♥ ♥ ♥</div><button class="btn full" id="a">ok I accept 🫶</button>');
+    document.getElementById("a").onclick = s6;
+  }
+  function s6(){
+    set('<div class="big">💳</div><h1>one small fee</h1>' +
+        '<p>to confirm your acceptance of this date, please complete the following transaction. totally normal. everyone does this.</p>' +
+        '<div class="fee"><div>Date Agreement™ <b>' + CFG.currency + CFG.fee + '</b></div><small>one-time fee • non-refundable • absolutely worth it</small></div>' +
+        '<button class="btn full" id="p">pay ' + CFG.currency + CFG.fee + ' &amp; confirm 🫶</button>' +
+        '<button class="link" id="b">go back</button>');
+    document.getElementById("p").onclick = s7;
+    document.getElementById("b").onclick = s5;
+  }
+  function s7(){
+    confetti();
+    set('<div class="big">😂</div><h1>gotcha!! no payment needed</h1>' +
+        '<p>this was a prank, nothing was charged.<br>the only thing you owe me is a smile 🌷</p>' +
+        '<div class="hearts">♥ ♥ ♥ ♥ ♥</div><p><b>see you at ' + CFG.pickup + ' 🚗</b></p>');
+  }
+
+  s1();
+})();
+</script>
+</body>
+</html>
